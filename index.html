@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Generatore di numeri casuali senza ripetizione</title>
+<style>
+    body, td, th {font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px;}
+    .titolo {font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 22px; color: #FF0000; font-weight: bold;}
+    .titoletto {font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 16px; color: #FF0000; font-weight: bold;}
+    .bottone {font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 14px; line-height: 45px; background-color: #FFFFFF; color: #000000; background-image: url(immagini-dice.png);}
+    #risultato {display: none;}
+</style>
+<script>
+    // Funzione per generare numeri casuali senza ripetizione
+    function generaNumeri() {
+        const max = parseInt(document.getElementById('max').value);
+        if (isNaN(max) || max <= 0) {
+            alert("Inserisci un numero valido.");
+            return;
+        }
+
+        // Nasconde i risultati durante il "caricamento"
+        document.getElementById('risultato').style.display = 'none';
+
+        // Simula un ritardo di 500 ms per il "caricamento"
+        setTimeout(() => {
+            // Array per memorizzare i numeri generati
+            let numeri = [];
+            for (let i = 1; i <= max; i++) {
+                numeri.push(i);
+            }
+
+            // Rimuove i numeri 6 e 11 temporaneamente
+            numeri = numeri.filter(numero => numero !== 6 && numero !== 11);
+
+            // Mescola l'array usando l'algoritmo di Fisher-Yates
+            for (let i = numeri.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [numeri[i], numeri[j]] = [numeri[j], numeri[i]];
+            }
+
+            // Reinserisce i numeri 6 e 11 dalla 12esima posizione in giù
+            let posizione6 = Math.floor(Math.random() * (numeri.length - 12 + 1)) + 12;
+            numeri.splice(posizione6, 0, 6);
+
+            let posizione11;
+            do {
+                posizione11 = Math.floor(Math.random() * (numeri.length - 12 + 1)) + 12;
+            } while (posizione11 === posizione6);
+            numeri.splice(posizione11, 0, 11);
+
+            // Crea la lista numerata come "numero estratto N"
+            let risultato = "";
+            numeri.forEach((numero, index) => {
+                risultato += (index + 1) + ") numero estratto " + numero + "<br>";
+            });
+
+            // Visualizza i numeri generati
+            document.getElementById('risultato').innerHTML = risultato;
+            document.getElementById('risultato').style.display = 'block'; // Mostra i risultati dopo il caricamento
+        }, 500); // 500 ms di ritardo per simulare il caricamento
+    }
+</script>
+</head>
+<body>
+    <form name="form1" onsubmit="event.preventDefault(); generaNumeri();">
+        <table width="100%" cellpadding="10" bgcolor="#FFFFFF">
+            <tr align="center" valign="middle">
+                <td colspan="2">
+                    <table width="100%" border="0">
+                        <tr>
+                            <td width="3%">
+                                <img src="immagini-dice.png" width="52" height="50">
+                            </td>
+                            <td width="93%" align="center" valign="middle" class="titolo">Generatore di numeri casuali senza ripetizione</td>
+                            <td width="4%">
+                                <img src="immagini-dice.png" width="52" height="50">
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td width="28%">Numero massimo da generare</td>
+                <td width="72%">
+                    <input id="max" name="max" type="text" size="10" maxlength="4">
+                </td>
+            </tr>
+            <tr>
+                <td valign="top">Numeri casuali generati </td>
+                <td id="risultato"></td>
+            </tr>
+            <tr bgcolor="#FF0000">
+                <td colspan="2" align="center" valign="middle">
+                    <input name="Submit" type="image" src="esercizi_svolti_HTML/immagini/dice.gif" alt="Genera numeri random" align="absmiddle" onclick="generaNumeri()">
+                </td>
+            </tr>
+        </table>
+    </form>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td height="73" align="center" valign="middle">
+                <form name="form2">
+                    <input name="Submit2" type="button" class="titoletto" value="Torna indietro" onclick="history.back();">
+                </form>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
