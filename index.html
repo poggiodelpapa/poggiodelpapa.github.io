@@ -11,55 +11,61 @@
     #risultato {display: none;}
 </style>
 <script>
-    // Funzione per generare numeri casuali senza ripetizione
-    function generaNumeri() {
-        const max = parseInt(document.getElementById('max').value);
-        if (isNaN(max) || max <= 0) {
-            alert("Inserisci un numero valido.");
-            return;
+function generaNumeri() {
+    const max = parseInt(document.getElementById('max').value);
+    if (isNaN(max) || max <= 0) {
+        alert("Inserisci un numero valido.");
+        return;
+    }
+
+    // Nasconde i risultati durante il "caricamento"
+    document.getElementById('risultato').style.display = 'none';
+
+    // Simula un ritardo di 500 ms per il "caricamento"
+    setTimeout(() => {
+        // Array per memorizzare i numeri generati
+        let numeri = [];
+        for (let i = 1; i <= max; i++) {
+            numeri.push(i);
         }
 
-        // Nasconde i risultati durante il "caricamento"
-        document.getElementById('risultato').style.display = 'none';
+        // Rimuove temporaneamente 6 e 11 solo se presenti nel range
+        let numeriDaAggiungere = [];
+        if (max >= 6) {
+            numeri = numeri.filter(numero => numero !== 6);
+            numeriDaAggiungere.push(6);
+        }
+        if (max >= 11) {
+            numeri = numeri.filter(numero => numero !== 11);
+            numeriDaAggiungere.push(11);
+        }
 
-        // Simula un ritardo di 500 ms per il "caricamento"
-        setTimeout(() => {
-            // Array per memorizzare i numeri generati
-            let numeri = [];
-            for (let i = 1; i <= max; i++) {
-                numeri.push(i);
-            }
+        // Mescola l'array usando l'algoritmo di Fisher-Yates
+        for (let i = numeri.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [numeri[i], numeri[j]] = [numeri[j], numeri[i]];
+        }
 
-            // Rimuove i numeri 6 e 11 temporaneamente
-            numeri = numeri.filter(numero => numero !== 6 && numero !== 11);
+        // Calcola l'inizio della seconda metà
+        const secondaMetaInizio = Math.ceil(numeri.length / 2);
 
-            // Mescola l'array usando l'algoritmo di Fisher-Yates
-            for (let i = numeri.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [numeri[i], numeri[j]] = [numeri[j], numeri[i]];
-            }
+        // Posiziona i numeri da aggiungere nella seconda metà
+        numeriDaAggiungere.forEach(numero => {
+            const posizione = Math.floor(Math.random() * (numeri.length - secondaMetaInizio)) + secondaMetaInizio;
+            numeri.splice(posizione, 0, numero);
+        });
 
-            // Reinserisce i numeri 6 e 11 dalla 12esima posizione in giù
-            let posizione6 = Math.floor(Math.random() * (numeri.length - 12 + 1)) + 12;
-            numeri.splice(posizione6, 0, 6);
+        // Crea la lista numerata come "numero estratto N"
+        let risultato = "";
+        numeri.forEach((numero, index) => {
+            risultato += (index + 1) + ") numero estratto " + numero + "<br>";
+        });
 
-            let posizione11;
-            do {
-                posizione11 = Math.floor(Math.random() * (numeri.length - 12 + 1)) + 12;
-            } while (posizione11 === posizione6);
-            numeri.splice(posizione11, 0, 11);
-
-            // Crea la lista numerata come "numero estratto N"
-            let risultato = "";
-            numeri.forEach((numero, index) => {
-                risultato += (index + 1) + ") numero estratto " + numero + "<br>";
-            });
-
-            // Visualizza i numeri generati
-            document.getElementById('risultato').innerHTML = risultato;
-            document.getElementById('risultato').style.display = 'block'; // Mostra i risultati dopo il caricamento
-        }, 500); // 500 ms di ritardo per simulare il caricamento
-    }
+        // Visualizza i numeri generati
+        document.getElementById('risultato').innerHTML = risultato;
+        document.getElementById('risultato').style.display = 'block'; // Mostra i risultati dopo il caricamento
+    }, 500); // 500 ms di ritardo per simulare il caricamento
+}
 </script>
 </head>
 <body>
